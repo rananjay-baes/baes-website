@@ -1,0 +1,69 @@
+{
+  "articles": [
+    {
+      "id": 1,
+      "title": "Gold Prices Surge to Record High of $4,079 Amid Geopolitical Tensions",
+      "description": "Gold futures reached an all-time high as investors seek safe-haven assets amid escalating global uncertainties and central bank buying.",
+      "source": "Financial Times",
+      "publishedAt": "2025-11-21T10:30:00Z",
+      "category": "Market Analysis"
+    },
+    {
+      "id": 2,
+      "title": "JP Morgan Forecasts Gold to Reach $4,500 by Q2 2026",
+      "description": "Leading investment bank predicts continued gold price appreciation driven by monetary policy shifts and sustained central bank demand.",
+      "source": "Bloomberg",
+      "publishedAt": "2025-11-20T14:15:00Z",
+      "category": "Price Forecast"
+    },
+    {
+      "id": 3,
+      "title": "Central Banks Increase Gold Reserves by 15% in 2025",
+      "description": "Global central banks continue aggressive gold accumulation strategy, with emerging markets leading the buying spree.",
+      "source": "Reuters",
+      "publishedAt": "2025-11-19T09:45:00Z",
+      "category": "Central Banks"
+    },
+    {
+      "id": 4,
+      "title": "Gold ETF Inflows Hit $12 Billion as Institutional Interest Grows",
+      "description": "Institutional investors pour record amounts into gold-backed ETFs, signaling strong confidence in precious metals sector.",
+      "source": "Wall Street Journal",
+      "publishedAt": "2025-11-18T16:20:00Z",
+      "category": "Investment Flows"
+    },
+    {
+      "id": 5,
+      "title": "Technical Analysis: Gold Breaks Key Resistance at $4,000",
+      "description": "Gold's breakthrough above the $4,000 psychological barrier opens path for further gains, technical analysts suggest.",
+      "source": "MarketWatch",
+      "publishedAt": "2025-11-17T11:00:00Z",
+      "category": "Technical Analysis"
+    },
+    {
+      "id": 6,
+      "title": "Mining Costs Rise 8% as Gold Production Faces Challenges",
+      "description": "Increased operational costs and supply constraints support higher gold prices as production growth slows globally.",
+      "source": "Mining.com",
+      "publishedAt": "2025-11-16T13:30:00Z",
+      "category": "Supply & Demand"
+    },
+    {
+      "id": 7,
+      "title": "Dollar Weakness Fuels Gold Rally to Multi-Year Highs",
+      "description": "Declining U.S. dollar index provides additional tailwind for gold prices as international buyers increase purchases.",
+      "source": "CNBC",
+      "publishedAt": "2025-11-15T08:45:00Z",
+      "category": "Currency Impact"
+    },
+    {
+      "id": 8,
+      "title": "Gold Volatility Creates Trading Opportunities for Algorithmic Systems",
+      "description": "Increased price swings in gold markets present ideal conditions for sophisticated automated trading strategies.",
+      "source": "Traders Magazine",
+      "publishedAt": "2025-11-14T15:10:00Z",
+      "category": "Trading Strategy"
+    }
+  ],
+  "lastUpdated": "2025-11-21T12:00:00Z"
+}
