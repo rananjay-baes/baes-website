@@ -54,23 +54,16 @@ export default function NavBar ({ page }: NavBarProps) {
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <Link href="/signup">
-                <Button variant="outline" className="hidden md:block bg-transparent border-accent text-accent hover:bg-accent hover:text-white">
-                  Sign Up
-                </Button>
-              </Link>
-              {/* Mobile Menu Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden text-accent hover:text-accent/80"
-                onClick={() => setMobileMenuOpen(true)}
-              >
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </div>
+            {/* Mobile Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden text-accent hover:text-accent/80"
+              onClick={() => setMobileMenuOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Open menu</span>
+            </Button>
           </div>
         </div>
       </nav>
@@ -79,7 +72,7 @@ export default function NavBar ({ page }: NavBarProps) {
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <SheetContent side="right" className="bg-primary text-primary-foreground border-l border-accent/30 w-[280px] sm:w-[320px]">
           <SheetHeader className="border-b border-accent/20 pb-4">
-            <SheetTitle className="text-accent text-2xl font-bold">Navigation</SheetTitle>
+            <SheetTitle className="text-accent text-2xl font-bold">BAES Solutions</SheetTitle>
           </SheetHeader>
           <div className="flex flex-col gap-2 mt-6">
             {navItems.map((item, index) => (
@@ -92,16 +85,6 @@ export default function NavBar ({ page }: NavBarProps) {
                 </div>
               </Link>
             ))}
-            <div className="border-t border-accent/20 my-4"></div>
-            <Link href="/signup">
-              <Button 
-                variant="outline" 
-                className="w-full bg-accent/10 border-2 border-accent text-accent hover:bg-accent hover:text-white transition-all duration-200 font-semibold py-6 text-base"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Sign Up
-              </Button>
-            </Link>
           </div>
           <div className="absolute bottom-6 left-4 right-4">
             <div className="flex items-center justify-center">
