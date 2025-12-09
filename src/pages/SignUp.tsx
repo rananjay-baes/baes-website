@@ -20,6 +20,96 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+// MT5 Server options
+const MT5_SERVERS = [
+  { value: "EquitiSecurities-Live", label: "Equiti Securities - Live" },
+  { value: "EquitiBrokerageSC-Live", label: "Equiti Brokerage SC - Live" }
+];
+
+// Comprehensive country list with phone codes and flags
+const COUNTRIES_WITH_CODES = [
+  { name: "United States", code: "+1", flag: "🇺🇸" },
+  { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
+  { name: "United Arab Emirates", code: "+971", flag: "🇦🇪" },
+  { name: "Argentina", code: "+54", flag: "🇦🇷" },
+  { name: "Australia", code: "+61", flag: "🇦🇺" },
+  { name: "Austria", code: "+43", flag: "🇦🇹" },
+  { name: "Bahrain", code: "+973", flag: "🇧🇭" },
+  { name: "Belgium", code: "+32", flag: "🇧🇪" },
+  { name: "Brazil", code: "+55", flag: "🇧🇷" },
+  { name: "Bulgaria", code: "+359", flag: "🇧🇬" },
+  { name: "Canada", code: "+1", flag: "🇨🇦" },
+  { name: "Chile", code: "+56", flag: "🇨🇱" },
+  { name: "China", code: "+86", flag: "🇨🇳" },
+  { name: "Colombia", code: "+57", flag: "🇨🇴" },
+  { name: "Czech Republic", code: "+420", flag: "🇨🇿" },
+  { name: "Denmark", code: "+45", flag: "🇩🇰" },
+  { name: "Egypt", code: "+20", flag: "🇪🇬" },
+  { name: "Finland", code: "+358", flag: "🇫🇮" },
+  { name: "France", code: "+33", flag: "🇫🇷" },
+  { name: "Germany", code: "+49", flag: "🇩🇪" },
+  { name: "Greece", code: "+30", flag: "🇬🇷" },
+  { name: "Hong Kong", code: "+852", flag: "🇭🇰" },
+  { name: "Hungary", code: "+36", flag: "🇭🇺" },
+  { name: "India", code: "+91", flag: "🇮🇳" },
+  { name: "Indonesia", code: "+62", flag: "🇮🇩" },
+  { name: "Ireland", code: "+353", flag: "🇮🇪" },
+  { name: "Israel", code: "+972", flag: "🇮🇱" },
+  { name: "Italy", code: "+39", flag: "🇮🇹" },
+  { name: "Japan", code: "+81", flag: "🇯🇵" },
+  { name: "Kenya", code: "+254", flag: "🇰🇪" },
+  { name: "Kuwait", code: "+965", flag: "🇰🇼" },
+  { name: "Malaysia", code: "+60", flag: "🇲🇾" },
+  { name: "Mexico", code: "+52", flag: "🇲🇽" },
+  { name: "Netherlands", code: "+31", flag: "🇳🇱" },
+  { name: "New Zealand", code: "+64", flag: "🇳🇿" },
+  { name: "Nigeria", code: "+234", flag: "🇳🇬" },
+  { name: "Norway", code: "+47", flag: "🇳🇴" },
+  { name: "Oman", code: "+968", flag: "🇴🇲" },
+  { name: "Peru", code: "+51", flag: "🇵🇪" },
+  { name: "Philippines", code: "+63", flag: "🇵🇭" },
+  { name: "Poland", code: "+48", flag: "🇵🇱" },
+  { name: "Portugal", code: "+351", flag: "🇵🇹" },
+  { name: "Qatar", code: "+974", flag: "🇶🇦" },
+  { name: "Romania", code: "+40", flag: "🇷🇴" },
+  { name: "Russia", code: "+7", flag: "🇷🇺" },
+  { name: "Saudi Arabia", code: "+966", flag: "🇸🇦" },
+  { name: "Singapore", code: "+65", flag: "🇸🇬" },
+  { name: "South Africa", code: "+27", flag: "🇿🇦" },
+  { name: "South Korea", code: "+82", flag: "🇰🇷" },
+  { name: "Spain", code: "+34", flag: "🇪🇸" },
+  { name: "Sweden", code: "+46", flag: "🇸🇪" },
+  { name: "Switzerland", code: "+41", flag: "🇨🇭" },
+  { name: "Taiwan", code: "+886", flag: "🇹🇼" },
+  { name: "Thailand", code: "+66", flag: "🇹🇭" },
+  { name: "Turkey", code: "+90", flag: "🇹🇷" },
+  { name: "Ukraine", code: "+380", flag: "🇺🇦" },
+  { name: "Vietnam", code: "+84", flag: "🇻🇳" },
+];
+
+// Extract just country names for the dropdown
+const COUNTRIES = COUNTRIES_WITH_CODES.map(c => c.name).sort();
+
+// Create mapping for auto-selecting phone code
+const COUNTRY_TO_PHONE_CODE: Record<string, string> = Object.fromEntries(
+  COUNTRIES_WITH_CODES.map(c => [c.name, c.code])
+);
+
+// Create phone codes list for the dropdown (deduplicated by code, prioritizing first occurrence)
+const PHONE_CODES_MAP = new Map<string, { code: string; country: string; flag: string; name: string }>();
+COUNTRIES_WITH_CODES.forEach(c => {
+  if (!PHONE_CODES_MAP.has(c.code)) {
+    PHONE_CODES_MAP.set(c.code, {
+      code: c.code,
+      country: c.name,
+      flag: c.flag,
+      name: c.name
+    });
+  }
+});
+const PHONE_CODES = Array.from(PHONE_CODES_MAP.values()).sort((a, b) => a.name.localeCompare(b.name));
 
 export default function SignUp() {
   const [inviteToken, setInviteToken] = useState<string | null>(null);
@@ -40,6 +130,8 @@ export default function SignUp() {
     agreeToTerms: false,
     understandRisks: false
   });
+
+  const [phoneCode, setPhoneCode] = useState("+971"); // Default to UAE
 
   const [mt5Accounts, setMt5Accounts] = useState([
     { mt5Login: "", mt5Password: "", mt5Server: "" }
@@ -144,7 +236,7 @@ export default function SignUp() {
       const response = await signUp({
         fullName: formData.fullName,
         email: formData.email,
-        phone: formData.phone,
+        phone: `${phoneCode}${formData.phone}`, // Combine phone code with number
         investmentAmount: formData.investmentAmount,
         profitSharing: formData.profitSharing || undefined,
         country: formData.country,
@@ -282,7 +374,7 @@ export default function SignUp() {
     
     setSendingPhoneOtp(true);
     try {
-      const response = await sendPhoneOtpApi(formData.phone);
+      const response = await sendPhoneOtpApi(`${phoneCode}${formData.phone}`);
       if (response.success) {
         toast.success(response.message || "Verification code sent to your phone");
         setPhoneOtpSent(true);
@@ -311,7 +403,7 @@ export default function SignUp() {
     
     setVerifyingPhoneOtp(true);
     try {
-      const response = await verifyOtpApi(null, formData.phone, formData.phoneOtp, 'phone');
+      const response = await verifyOtpApi(null, `${phoneCode}${formData.phone}`, formData.phoneOtp, 'phone');
       if (response.success && response.verified) {
         setFormData({ ...formData, phoneVerified: true });
         toast.success(response.message || "Phone verified successfully");
@@ -554,16 +646,31 @@ export default function SignUp() {
 
                   <div>
                     <Label htmlFor="country">Country *</Label>
-                    <Input
-                      id="country"
-                      name="country"
-                      type="text"
-                      required
+                    <Select
                       value={formData.country}
-                      onChange={handleChange}
-                      placeholder="United Arab Emirates"
-                      className="mt-2"
-                    />
+                      onValueChange={(value) => {
+                        setFormData({...formData, country: value});
+                        // Auto-select phone code based on country
+                        const phoneCodeForCountry = COUNTRY_TO_PHONE_CODE[value];
+                        if (phoneCodeForCountry) {
+                          setPhoneCode(phoneCodeForCountry);
+                        }
+                      }}
+                      required
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <ScrollArea className="h-[200px]">
+                          {COUNTRIES.map((country) => (
+                            <SelectItem key={country} value={country}>
+                              {country}
+                            </SelectItem>
+                          ))}
+                        </ScrollArea>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
@@ -657,17 +764,35 @@ export default function SignUp() {
 
                   <div>
                     <Label htmlFor="phone">Phone Number *</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="+971 50 123 4567"
-                      disabled={formData.phoneVerified}
-                      className="mt-2"
-                    />
+                    <div className="flex gap-2 mt-2">
+                      <Select
+                        value={phoneCode}
+                        onValueChange={setPhoneCode}
+                        disabled={formData.phoneVerified}
+                      >
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PHONE_CODES.map((item) => (
+                            <SelectItem key={item.code} value={item.code}>
+                              <span>{item.flag} {item.code} ({item.name})</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        required
+                        value={formData.phone}
+                        onChange={handleChange}
+                        placeholder="50 123 4567"
+                        disabled={formData.phoneVerified}
+                        className="flex-1"
+                      />
+                    </div>
                     {!formData.phoneVerified ? (
                       <>
                         {!phoneOtpSent ? (
@@ -859,15 +984,22 @@ export default function SignUp() {
                         </div>
                         <div>
                           <Label htmlFor={`mt5Server-${index}`}>MT5 Server *</Label>
-                          <Input
-                            id={`mt5Server-${index}`}
-                            type="text"
-                            required
+                          <Select
                             value={account.mt5Server}
-                            onChange={(e) => handleMt5Change(index, 'mt5Server', e.target.value)}
-                            placeholder="MT5 Server Name"
-                            className="mt-2"
-                          />
+                            onValueChange={(value) => handleMt5Change(index, 'mt5Server', value)}
+                            required
+                          >
+                            <SelectTrigger className="mt-2">
+                              <SelectValue placeholder="Select MT5 Server" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {MT5_SERVERS.map((server) => (
+                                <SelectItem key={server.value} value={server.value}>
+                                  {server.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                     </Card>
