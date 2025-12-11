@@ -220,18 +220,30 @@ export default function SignUp() {
         account.mt5Server
       );
 
+      console.log('MT5 Validation Response:', response);
+
       if (response.success) {
         // Mark as validated and lock the fields
-        updatedAccounts[index] = { ...account, validated: true, validating: false };
-        setMt5Accounts(updatedAccounts);
+        const newAccounts = [...mt5Accounts];
+        newAccounts[index] = { 
+          ...newAccounts[index], 
+          validated: true, 
+          validating: false 
+        };
+        setMt5Accounts(newAccounts);
         toast.success('MT5 account validated successfully! Credentials are now locked.');
       } else {
         throw new Error(response.error || 'Validation failed');
       }
     } catch (error: any) {
       console.error('MT5 validation error:', error);
-      updatedAccounts[index] = { ...account, validated: false, validating: false };
-      setMt5Accounts(updatedAccounts);
+      const newAccounts = [...mt5Accounts];
+      newAccounts[index] = { 
+        ...newAccounts[index], 
+        validated: false, 
+        validating: false 
+      };
+      setMt5Accounts(newAccounts);
       
       // Check if it's a timeout error
       if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
