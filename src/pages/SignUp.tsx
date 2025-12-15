@@ -272,7 +272,8 @@ export default function SignUp() {
       return;
     }
 
-    if (!formData.phoneVerified) {
+    // Only require phone verification for India
+    if (formData.country === "India" && !formData.phoneVerified) {
       toast.error("Please verify your phone number");
       return;
     }
@@ -315,7 +316,8 @@ export default function SignUp() {
         country: formData.country,
         mt5Accounts: validMt5Accounts,
         emailVerified: formData.emailVerified,
-        phoneVerified: formData.phoneVerified,
+        // For India, use actual verification status; for other countries, mark as verified (no OTP required)
+        phoneVerified: formData.country === "India" ? formData.phoneVerified : true,
         inviteToken: inviteToken, // Include invitation token
       });
 
@@ -824,7 +826,7 @@ export default function SignUp() {
                       <Select
                         value={phoneCode}
                         onValueChange={setPhoneCode}
-                        disabled={formData.phoneVerified}
+                        disabled={formData.phoneVerified && formData.country === "India"}
                       >
                         <SelectTrigger className="w-[140px]">
                           <SelectValue />
@@ -845,83 +847,92 @@ export default function SignUp() {
                       value={formData.phone}
                       onChange={handleChange}
                         placeholder="50 123 4567"
-                      disabled={formData.phoneVerified}
+                      disabled={formData.phoneVerified && formData.country === "India"}
                         className="flex-1"
                     />
                     </div>
-                    {!formData.phoneVerified ? (
+                    {/* Only show OTP verification for India */}
+                    {formData.country === "India" ? (
                       <>
-                        {!phoneOtpSent ? (
-                          <Button 
-                            type="button" 
-                            onClick={sendPhoneOtp} 
-                            variant="outline"
-                            disabled={sendingPhoneOtp}
-                            className="mt-2 w-full"
-                          >
-                            {sendingPhoneOtp ? (
-                              <>
-                                <Spinner className="mr-2 h-4 w-4" />
-                                Sending...
-                              </>
+                        {!formData.phoneVerified ? (
+                          <>
+                            {!phoneOtpSent ? (
+                              <Button 
+                                type="button" 
+                                onClick={sendPhoneOtp} 
+                                variant="outline"
+                                disabled={sendingPhoneOtp}
+                                className="mt-2 w-full"
+                              >
+                                {sendingPhoneOtp ? (
+                                  <>
+                                    <Spinner className="mr-2 h-4 w-4" />
+                                    Sending...
+                                  </>
+                                ) : (
+                                  "Send Verification Code"
+                                )}
+                              </Button>
                             ) : (
-                              "Send Verification Code"
+                              <div className="mt-2 space-y-2">
+                                <Input
+                                  name="phoneOtp"
+                                  type="text"
+                                  placeholder="Enter 6-digit verification code"
+                                  value={formData.phoneOtp}
+                                  onChange={handleChange}
+                                  maxLength={6}
+                                  className="w-full"
+                                />
+                                <Button 
+                                  type="button" 
+                                  onClick={verifyPhoneOtp} 
+                                  variant="outline"
+                                  disabled={verifyingPhoneOtp}
+                                  className="w-full"
+                                >
+                                  {verifyingPhoneOtp ? (
+                                    <>
+                                      <Spinner className="mr-2 h-4 w-4" />
+                                      Verifying...
+                                    </>
+                                  ) : (
+                                    "Verify Code"
+                                  )}
+                                </Button>
+                                <Button 
+                                  type="button" 
+                                  onClick={sendPhoneOtp} 
+                                  variant="ghost"
+                                  disabled={phoneOtpCountdown > 0 || sendingPhoneOtp}
+                                  className="w-full text-sm"
+                                >
+                                  {sendingPhoneOtp ? (
+                                    <>
+                                      <Spinner className="mr-2 h-4 w-4" />
+                                      Sending...
+                                    </>
+                                  ) : phoneOtpCountdown > 0 ? (
+                                    `Resend Code (${phoneOtpCountdown}s)`
+                                  ) : (
+                                    "Resend Code"
+                                  )}
+                                </Button>
+                              </div>
                             )}
-                          </Button>
+                          </>
                         ) : (
-                          <div className="mt-2 space-y-2">
-                            <Input
-                              name="phoneOtp"
-                              type="text"
-                              placeholder="Enter 6-digit verification code"
-                              value={formData.phoneOtp}
-                              onChange={handleChange}
-                              maxLength={6}
-                              className="w-full"
-                            />
-                            <Button 
-                              type="button" 
-                              onClick={verifyPhoneOtp} 
-                              variant="outline"
-                              disabled={verifyingPhoneOtp}
-                              className="w-full"
-                            >
-                              {verifyingPhoneOtp ? (
-                                <>
-                                  <Spinner className="mr-2 h-4 w-4" />
-                                  Verifying...
-                                </>
-                              ) : (
-                                "Verify Code"
-                              )}
-                            </Button>
-                            <Button 
-                              type="button" 
-                              onClick={sendPhoneOtp} 
-                              variant="ghost"
-                              disabled={phoneOtpCountdown > 0 || sendingPhoneOtp}
-                              className="w-full text-sm"
-                            >
-                              {sendingPhoneOtp ? (
-                                <>
-                                  <Spinner className="mr-2 h-4 w-4" />
-                                  Sending...
-                                </>
-                              ) : phoneOtpCountdown > 0 ? (
-                                `Resend Code (${phoneOtpCountdown}s)`
-                              ) : (
-                                "Resend Code"
-                              )}
+                          <div className="mt-2">
+                            <Button type="button" disabled variant="outline" className="w-full bg-green-500/20 text-green-600">
+                              ✓ Phone Verified
                             </Button>
                           </div>
                         )}
                       </>
                     ) : (
-                      <div className="mt-2">
-                        <Button type="button" disabled variant="outline" className="w-full bg-green-500/20 text-green-600">
-                          ✓ Phone Verified
-                        </Button>
-                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Phone verification not required for {formData.country || "selected country"}
+                      </p>
                     )}
                   </div>
 
